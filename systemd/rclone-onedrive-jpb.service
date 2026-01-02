@@ -1,0 +1,33 @@
+[Unit]
+Description=Rclone mount for OneDrive JPG (read-only)
+Documentation=https://rclone.org/commands/rclone_mount/
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=notify
+User=root
+Group=root
+
+ExecStartPre=/bin/mkdir -p /JPG
+
+ExecStart=/usr/bin/rclone mount onedrive:Pictures/Fotos/JPG /JPG \
+    --config /root/.config/rclone/rclone.conf \
+    --allow-other \
+    --read-only \
+    --vfs-cache-mode full \
+    --vfs-cache-max-size 2G \
+    --log-level INFO \
+    --log-file /var/log/backup-system/rclone-JPG.log
+
+ExecStop=/bin/fusermount -uz /JPG
+
+Restart=on-failure
+RestartSec=10
+
+Environment=HOME=/root
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,21 @@
+[Unit]
+Description=Backup Report Generator
+Documentation=file:///opt/backup-system/README.md
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+
+ExecStart=/opt/backup-system/report-generator.sh
+
+# Timeout de 5 minutos
+TimeoutStartSec=300
+
+# Log
+StandardOutput=append:/var/log/backup-system/report-service.log
+StandardError=append:/var/log/backup-system/report-service.log
+
+[Install]
+WantedBy=multi-user.target

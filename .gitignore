@@ -1,0 +1,13 @@
+# Arquivos de configuração com dados sensíveis
+config/backup.conf
+config/report.conf
+
+# Não ignorar os exemplos
+!config/*.example
+
+# Logs locais (ambientes de desenvolvimento)
+*.log
+
+# Arquivos de IDE
+.vscode/
+.idea/

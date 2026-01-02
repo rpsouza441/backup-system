@@ -1,0 +1,41 @@
+# =============================================================================
+# Report System - Configuração
+# ============================================================================
+# INSTRUÇÕES: Copie este arquivo para report.conf e edite com seus valores
+#   cp report.conf.example report.conf
+# ============================================================================
+
+# =============================================================================
+# EMAIL
+# =============================================================================
+# Destinatário do email de relatório
+# O remetente é configurado em /etc/msmtprc
+EMAIL="seu_email@gmail.com"
+
+# =============================================================================
+# WEBHOOK (alternativo ao email)
+# =============================================================================
+# URL para enviar relatório via webhook (ex: Slack, Discord, etc)
+# Deixe vazio para desabilitar
+WEBHOOK_URL=""
+
+# =============================================================================
+# ALERTAS SMART
+# Níveis: INFO, WARNING, CRITICAL
+# - INFO: alertas aparecem no relatório mas NÃO mudam status do título
+# - WARNING: alertas SMART elevam status para WARNING no título  
+# - CRITICAL: apenas status≠PASSED eleva para CRÍTICO
+# =============================================================================
+SMART_ALERT_LEVEL="WARNING"
+
+# =============================================================================
+# DIRETÓRIOS
+# =============================================================================
+LOG_DIR="/var/log/backup-system"
+REPORT_DIR="/var/log/backup-system/reports"
+
+# =============================================================================
+# RETENÇÃO
+# =============================================================================
+# Dias para manter relatórios antigos
+REPORT_RETENTION_DAYS=30

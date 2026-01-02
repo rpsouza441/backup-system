@@ -1,0 +1,16 @@
+[Unit]
+Description=Backup Report Timer (daily at 09:00)
+Documentation=file:///opt/backup-system/README.md
+
+[Timer]
+# Executar todo dia às 09:00
+OnCalendar=*-*-* 09:00:00
+
+# Se o sistema estava desligado no horário, executar ao iniciar
+Persistent=true
+
+# Randomizar um pouco para evitar picos (até 5 min)
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

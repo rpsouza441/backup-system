@@ -1,0 +1,41 @@
+[Unit]
+Description=Rclone mount for OneDrive %i
+Documentation=https://rclone.org/commands/rclone_mount/
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=notify
+User=root
+Group=root
+
+# Criar ponto de montagem se não existir
+ExecStartPre=/bin/mkdir -p /%i
+
+# Comando de montagem - SERVER-BACKUP usa opções de escrita
+# Para JPG seria necessário criar um serviço com --read-only
+ExecStart=/usr/bin/rclone mount onedrive:%i /%i \
+    --config /root/.config/rclone/rclone.conf \
+    --allow-other \
+    --vfs-cache-mode writes \
+    --vfs-cache-max-age 24h \
+    --transfers 8 \
+    --checkers 16 \
+    --retries 5 \
+    --log-level INFO \
+    --log-file /var/log/backup-system/rclone-%i.log
+
+# Desmontar com fusermount
+ExecStop=/bin/fusermount -uz /%i
+
+# Reiniciar em caso de falha
+Restart=on-failure
+RestartSec=10
+
+# Ambiente limpo
+Environment=HOME=/root
+
+[Install]
+WantedBy=multi-user.target

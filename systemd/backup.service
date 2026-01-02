@@ -1,0 +1,23 @@
+[Unit]
+Description=Backup System Orchestrator
+Documentation=file:///opt/backup-system/README.md
+After=network-online.target rclone-onedrive@SERVER-BACKUP.service
+Wants=network-online.target
+Requires=rclone-onedrive@SERVER-BACKUP.service
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+
+ExecStart=/opt/backup-system/backup-orchestrator.sh
+
+# Tempo máximo de execução (2 horas)
+TimeoutStartSec=7200
+
+# Log
+StandardOutput=append:/var/log/backup-system/backup-service.log
+StandardError=append:/var/log/backup-system/backup-service.log
+
+[Install]
+WantedBy=multi-user.target

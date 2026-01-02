@@ -1,0 +1,33 @@
+[Unit]
+Description=Rclone mount for OneDrive IMMICH
+Documentation=https://rclone.org/commands/rclone_mount/
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=notify
+User=root
+Group=root
+
+ExecStartPre=/bin/mkdir -p /IMMICH
+
+ExecStart=/usr/bin/rclone mount onedrive:Pictures/Fotos/Immich /IMMICH \
+    --config /root/.config/rclone/rclone.conf \
+    --allow-other \
+    --vfs-cache-mode writes \
+    --transfers 4 \
+    --checkers 8 \
+    --log-level INFO \
+    --log-file /var/log/backup-system/rclone-IMMICH.log
+
+ExecStop=/bin/fusermount -uz /IMMICH
+
+Restart=on-failure
+RestartSec=10
+
+Environment=HOME=/root
+
+[Install]
+WantedBy=multi-user.target

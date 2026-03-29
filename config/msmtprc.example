@@ -24,16 +24,12 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile        /var/log/msmtp.log
 
 # Conta Gmail (padrão)
-# Para criar uma App Password:
-# 1. Acesse: https://myaccount.google.com/apppasswords
-# 2. Gere uma nova senha para "Mail" em "Outro dispositivo"
-# 3. Cole a senha de 16 caracteres abaixo (sem espaços)
 account        gmail
 host           smtp.gmail.com
 port           587
-from           seu_email@gmail.com
-user           seu_email@gmail.com
-password       SUA_APP_PASSWORD_AQUI
+from           rpsouzati@gmail.com
+user           rpsouzati@gmail.com
+password       zgmkrcnukpzbgckw
 
 # Definir gmail como conta padrão
 account default : gmail

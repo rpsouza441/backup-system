@@ -12,7 +12,7 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # =============================================================================
 # CONFIGURAÇÃO
 # =============================================================================
-DATA_DEST="${DATA_DEST:-/path/to/backup}"
+DATA_DEST="${DATA_DEST:-/storage2/DATA}"
 TAR_SOURCE="$DATA_DEST/Atual"
 BACKUP_PATH="/SERVER-BACKUP"
 TAR_COPY_TIMEOUT="${TAR_COPY_TIMEOUT:-300}"

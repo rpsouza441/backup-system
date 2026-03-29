@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # =============================================================================
 # report-generator.sh - Gerador de relatórios de backup
@@ -46,6 +45,14 @@ find_today_logs() {
     BACKUP_LOG=$(find "$LOG_DIR" -name "backup_${TODAY}*.log" -type f 2>/dev/null | sort | tail -1)
     RSYNC_LOG=$(find "$LOG_DIR" -name "rsync_${TODAY}*.log" -type f 2>/dev/null | sort | tail -1)
     SMART_LOG="${LOG_DIR}/smart_latest.log"
+
+    if [ ! -f "$SMART_LOG" ]; then
+        SMART_LOG=$(find "$LOG_DIR" -name "smart_${TODAY}*.log" -type f 2>/dev/null | sort | tail -1)
+    fi
+
+    if [ ! -f "$SMART_LOG" ]; then
+        SMART_LOG=$(find "$LOG_DIR" -name "smart_*.log" -type f 2>/dev/null | sort | tail -1)
+    fi
 }
 
 # =============================================================================
@@ -148,8 +155,8 @@ else
     BACKUP_STATUS="MISSING"
 fi
 
-analyze_smart "$SMART_LOG"
-[ -n "$RSYNC_LOG" ] && analyze_rsync "$RSYNC_LOG"
+analyze_smart "$SMART_LOG" || true
+[ -n "$RSYNC_LOG" ] && analyze_rsync "$RSYNC_LOG" || true
 analyze_disk
 
 # Determinar status

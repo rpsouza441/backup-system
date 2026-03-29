@@ -12,7 +12,7 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # =============================================================================
 # CONFIGURAÇÃO
 # =============================================================================
-DATA_DEST="${DATA_DEST:-/path/to/backup}"
+DATA_DEST="${DATA_DEST:-/storage2/DATA}"
 BACKUP_PATH="/SERVER-BACKUP"
 TAR_RETENTION_DAYS="${TAR_RETENTION_DAYS:-7}"
 DAILY_BACKUP_RETENTION="${DAILY_BACKUP_RETENTION:-5}"

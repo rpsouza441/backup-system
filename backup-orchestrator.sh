@@ -27,6 +27,9 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # Definir arquivo de log para esta execução
 export LOG_FILE="$LOG_DIR/backup_$(date +%Y%m%d_%H%M%S).log"
 
+# Medição monotônica da duração da execução
+SECONDS=0
+
 # =============================================================================
 # FUNÇÕES DO ORQUESTRADOR
 # =============================================================================
@@ -236,6 +239,8 @@ else
     exit_code=1
 fi
 
+elapsed=$SECONDS
+log "DURAÇÃO REAL: ${elapsed}s ($((elapsed/60))m $((elapsed%60))s)"
 log "Log detalhado salvo em: $LOG_FILE"
 log "Script finalizado em $(date)"
 

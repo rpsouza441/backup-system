@@ -31,21 +31,27 @@ analyze_backup() {
     fi
     
     # Duração
-    local inicio fim
-    inicio=$(grep "Iniciando" "$backup_log" | head -1 | grep -oP '\[\K[^\]]+')
-    fim=$(grep "Script finalizado" "$backup_log" | tail -1 | grep -oP '\[\K[^\]]+')
-    if [ -n "$inicio" ] && [ -n "$fim" ]; then
-        local inicio_ts fim_ts duracao
-        inicio_ts=$(date -d "$inicio" +%s 2>/dev/null)
-        fim_ts=$(date -d "$fim" +%s 2>/dev/null)
-        if [ -n "$inicio_ts" ] && [ -n "$fim_ts" ]; then
-            duracao=$((fim_ts - inicio_ts))
-            # Se duração for negativa (ajuste de relógio durante backup), usar valor absoluto
-            if [ "$duracao" -lt 0 ]; then
-                duracao=$((-duracao))
-                BACKUP_DURATION="~$((duracao/60))m $((duracao%60))s (ajuste de relógio)"
-            else
-                BACKUP_DURATION="$((duracao/60))m $((duracao%60))s"
+    local real_duration
+    real_duration=$(grep "DURAÇÃO REAL:" "$backup_log" | tail -1 | sed -n 's/.*DURAÇÃO REAL: [0-9]\+s (\(.*\)).*/\1/p')
+    if [ -n "$real_duration" ]; then
+        BACKUP_DURATION="$real_duration"
+    else
+        local inicio fim
+        inicio=$(grep "Iniciando" "$backup_log" | head -1 | grep -oP '\[\K[^\]]+')
+        fim=$(grep "Script finalizado" "$backup_log" | tail -1 | grep -oP '\[\K[^\]]+')
+        if [ -n "$inicio" ] && [ -n "$fim" ]; then
+            local inicio_ts fim_ts duracao
+            inicio_ts=$(date -d "$inicio" +%s 2>/dev/null)
+            fim_ts=$(date -d "$fim" +%s 2>/dev/null)
+            if [ -n "$inicio_ts" ] && [ -n "$fim_ts" ]; then
+                duracao=$((fim_ts - inicio_ts))
+                # Fallback para logs antigos ou execuções afetadas por ajuste de relógio.
+                if [ "$duracao" -lt 0 ]; then
+                    duracao=$((-duracao))
+                    BACKUP_DURATION="~$((duracao/60))m $((duracao%60))s (ajuste de relógio)"
+                else
+                    BACKUP_DURATION="$((duracao/60))m $((duracao%60))s"
+                fi
             fi
         fi
     fi

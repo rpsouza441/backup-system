@@ -40,7 +40,13 @@ analyze_backup() {
         fim_ts=$(date -d "$fim" +%s 2>/dev/null)
         if [ -n "$inicio_ts" ] && [ -n "$fim_ts" ]; then
             duracao=$((fim_ts - inicio_ts))
-            BACKUP_DURATION="$((duracao/60))m $((duracao%60))s"
+            # Se duração for negativa (ajuste de relógio durante backup), usar valor absoluto
+            if [ "$duracao" -lt 0 ]; then
+                duracao=$((-duracao))
+                BACKUP_DURATION="~$((duracao/60))m $((duracao%60))s (ajuste de relógio)"
+            else
+                BACKUP_DURATION="$((duracao/60))m $((duracao%60))s"
+            fi
         fi
     fi
     

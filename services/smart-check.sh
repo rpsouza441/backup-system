@@ -39,7 +39,7 @@ while read -r DEV TYPE; do
     [ -n "$TYPE" ] && OPT="-d $TYPE"
 
     # Health
-    H_OUT="$(smartctl -H $OPT "$DEV" 2>&1)"
+    H_OUT="$(smartctl -H $OPT "$DEV" 2>&1 || true)"
     OVERALL="$(printf '%s\n' "$H_OUT" | awk -F: '/overall-health|Health Status/ {gsub(/[ \t]/,"",$2); print $2; exit}')"
     [ -z "$OVERALL" ] && OVERALL="UNKNOWN"
 
@@ -48,7 +48,7 @@ while read -r DEV TYPE; do
     printf '%s\n' "$H_OUT" | grep -qi "marginal Attributes" && NOTE="${NOTE} marginal_attributes"
 
     if [ "$TYPE" = "nvme" ]; then
-        A_OUT="$(smartctl -x $OPT "$DEV" 2>&1)"
+        A_OUT="$(smartctl -x $OPT "$DEV" 2>&1 || true)"
         TEMP="$(printf '%s\n' "$A_OUT" | awk -F: '/[Cc]omposite [Tt]emperature|[Tt]emperature/ {gsub(/[^0-9]/,"",$2); if($2!=""){print $2; exit}}')"
         [ -z "$TEMP" ] && TEMP="NA"
         CRIT="$(printf '%s\n' "$A_OUT" | awk -F: '/Critical Warning/ {gsub(/[ \t]/,"",$2); print $2; exit}')"
@@ -68,7 +68,7 @@ while read -r DEV TYPE; do
 
         { [ "$OVERALL" != "PASSED" ] || [ -n "$ALERTS$NOTE" ]; } && warn_count=$((warn_count+1))
     else
-        A_OUT="$(smartctl -A $OPT "$DEV" 2>&1)"
+        A_OUT="$(smartctl -A $OPT "$DEV" 2>&1 || true)"
         # Extração clássica SATA/SAS
         REALLOC="$(printf '%s\n' "$A_OUT" | awk '$2=="Reallocated_Sector_Ct"{print $10}')"
         PENDING="$(printf '%s\n' "$A_OUT" | awk '$2=="Current_Pending_Sector"{print $10}')"

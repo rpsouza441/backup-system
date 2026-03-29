@@ -1,36 +1,42 @@
 # Backup System - Configuração
 # ============================================================================
-# INSTRUÇÕES: Copie este arquivo para backup.conf e edite com seus valores
-#   cp backup.conf.example backup.conf
+# INSTRUÇÕES:
+# 1. Copie este arquivo para backup.conf
+#    cp config/backup.conf.example config/backup.conf
+# 2. Ajuste os caminhos, UUIDs e remotes conforme o seu ambiente
+# 3. Garanta que seus pontos de montagem e o rclone já estejam configurados
 # ============================================================================
 
 # =============================================================================
 # PATHS
 # =============================================================================
 # Diretório de logs do sistema
-LOG_DIR="/var/log/backup-system"
+LOG_DIR="/var/log/seu-backup"
 
 # Diretório fonte dos dados a fazer backup
-# Exemplo: /mnt/dados, /home/user/dados, etc
-DATA_SOURCE="/caminho/para/seus/dados"
+# Exemplo: /mnt/dados, /srv/dados, /home/user/dados
+DATA_SOURCE="/caminho/da/origem"
 
-# Diretório destino para armazenar os backups
-# Deve estar em um disco/partição separada do fonte
-DATA_DEST="/caminho/destino/backup"
+# Diretório destino para armazenar o backup diário via rsync
+# Deve estar em outro disco/partição, com espaço suficiente
+DATA_DEST="/caminho/do/destino"
 
 # =============================================================================
 # STORAGES A MONTAR
 # Formato: UUID:MOUNT_POINT:LABEL:CRITICAL
 # CRITICAL = 1 se falha deve abortar backup, 0 se pode continuar
 #
-# Para obter o UUID de um disco, use:
-#   sudo blkid /dev/sdX1
+# Para descobrir os UUIDs:
+#   sudo blkid
+# ou
+#   ls -l /dev/disk/by-uuid/
 # =============================================================================
 STORAGES=(
-    # Formato: UUID:PONTO_MONTAGEM:LABEL:CRITICO
-    # Exemplo com 2 discos:
-    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:/mnt/disco1:disco1:1"
-    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:/mnt/disco2:disco2:0"
+    # Exemplo com 4 storages:
+    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:/mnt/disco-a:disco-a:1"
+    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:/mnt/disco-b:disco-b:0"
+    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:/mnt/disco-c:disco-c:1"
+    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:/mnt/disco-d:disco-d:1"
 )
 
 # =============================================================================
@@ -38,38 +44,43 @@ STORAGES=(
 # Formato: REMOTE_PATH:LOCAL_PATH:MODE
 # MODE = writes | readonly | full
 #
-# Configure primeiro o rclone:
+# Antes de usar, configure o remote no rclone:
 #   rclone config
 # =============================================================================
 ONEDRIVE_MOUNTS=(
-    "REMOTE-FOLDER:/MOUNT-POINT:writes"
-    "Pictures/Fotos:/FOTOS:readonly"
+    "remote-backup:/mnt/nuvem-backup:writes"
+    "remote-readonly:/mnt/nuvem-leitura:readonly"
+    "remote-sync:/mnt/nuvem-sync:writes"
 )
 
 # =============================================================================
 # RETENÇÃO E LIMPEZA
 # =============================================================================
-TAR_RETENTION_DAYS=7       # Dias para manter TARs
-DAILY_BACKUP_RETENTION=5   # Dias para manter pastas diárias do rsync  
+TAR_RETENTION_DAYS=7       # Dias para manter TARs locais e remotos
+DAILY_BACKUP_RETENTION=5   # Dias para manter pastas diárias do rsync
 LOG_RETENTION_DAYS=60      # Dias para manter logs
 
 # =============================================================================
 # RSYNC
 # =============================================================================
-# Arquivo com padrões de exclusão para rsync (um por linha)
-# Crie um arquivo com os padrões a ignorar (um por linha)
-RSYNC_EXCLUDE_FILE="/caminho/destino/backup/EXCLUDE"
+# Arquivo com padrões de exclusão do rsync (um por linha)
+# Exemplo de conteúdo:
+#   *.tmp
+#   cache/
+#   node_modules/
+RSYNC_EXCLUDE_FILE="/caminho/do/destino/EXCLUDE"
 
 # =============================================================================
 # DOCKER
 # =============================================================================
-DOCKER_STOP_TIMEOUT=10     # Segundos para aguardar containers pararem
+# Tempo para aguardar o shutdown gracioso dos containers antes do backup
+DOCKER_STOP_TIMEOUT=10
 
 # =============================================================================
 # TIMEOUTS
 # =============================================================================
-UUID_CHECK_ATTEMPTS=6      # Tentativas para encontrar UUID
+UUID_CHECK_ATTEMPTS=6      # Tentativas para encontrar UUID durante o boot
 UUID_CHECK_INTERVAL=10     # Segundos entre tentativas
 RCLONE_HEALTH_TIMEOUT=30   # Timeout para verificar saúde do rclone
-TAR_COPY_TIMEOUT=300       # Timeout para copiar TAR (5 min)
+TAR_COPY_TIMEOUT=300       # Timeout para copiar TAR
 TAR_COPY_RETRIES=3         # Tentativas de cópia do TAR

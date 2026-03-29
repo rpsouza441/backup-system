@@ -12,9 +12,9 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # =============================================================================
 # CONFIGURAÇÃO
 # =============================================================================
-DATA_SOURCE="${DATA_SOURCE:-/path/to/source}"
-DATA_DEST="${DATA_DEST:-/path/to/backup}"
-EXCLUDE_FILE="${RSYNC_EXCLUDE_FILE:-/path/to/backup/EXCLUDE}"
+DATA_SOURCE="${DATA_SOURCE:-/srv/DATA}"
+DATA_DEST="${DATA_DEST:-/storage2/DATA}"
+EXCLUDE_FILE="${RSYNC_EXCLUDE_FILE:-/storage2/DATA/EXCLUDE}"
 
 # =============================================================================
 # VERIFICAÇÕES

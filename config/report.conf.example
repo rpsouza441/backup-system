@@ -1,21 +1,25 @@
 # =============================================================================
 # Report System - Configuração
 # ============================================================================
-# INSTRUÇÕES: Copie este arquivo para report.conf e edite com seus valores
-#   cp report.conf.example report.conf
+# INSTRUÇÕES:
+# 1. Copie este arquivo para report.conf
+#    cp config/report.conf.example config/report.conf
+# 2. Configure o destinatário do email
+# 3. Opcionalmente, configure um webhook como fallback
+# 4. Garanta que o /etc/msmtprc esteja configurado se quiser envio por email
 # ============================================================================
 
 # =============================================================================
 # EMAIL
 # =============================================================================
 # Destinatário do email de relatório
-# O remetente é configurado em /etc/msmtprc
+# O remetente/SMTP é configurado em /etc/msmtprc
 EMAIL="seu_email@gmail.com"
 
 # =============================================================================
 # WEBHOOK (alternativo ao email)
 # =============================================================================
-# URL para enviar relatório via webhook (ex: Slack, Discord, etc)
+# Pode ser usado como fallback para Slack, Discord, Mattermost, etc.
 # Deixe vazio para desabilitar
 WEBHOOK_URL=""
 
@@ -23,16 +27,19 @@ WEBHOOK_URL=""
 # ALERTAS SMART
 # Níveis: INFO, WARNING, CRITICAL
 # - INFO: alertas aparecem no relatório mas NÃO mudam status do título
-# - WARNING: alertas SMART elevam status para WARNING no título  
-# - CRITICAL: apenas status≠PASSED eleva para CRÍTICO
+# - WARNING: alertas SMART elevam status para WARNING no título
+# - CRITICAL: apenas status diferente de PASSED/OK eleva para CRÍTICO
 # =============================================================================
 SMART_ALERT_LEVEL="WARNING"
 
 # =============================================================================
 # DIRETÓRIOS
 # =============================================================================
-LOG_DIR="/var/log/backup-system"
-REPORT_DIR="/var/log/backup-system/reports"
+# Diretório onde os logs do backup são gravados
+LOG_DIR="/var/log/seu-backup"
+
+# Diretório onde os relatórios gerados serão salvos
+REPORT_DIR="/var/log/seu-backup/reports"
 
 # =============================================================================
 # RETENÇÃO

@@ -1,8 +1,8 @@
 [Unit]
 Description=Backup System Orchestrator
 Documentation=file:///opt/backup-system/README.md
-After=network-online.target rclone-onedrive@SERVER-BACKUP.service
-Wants=network-online.target
+After=network-online.target time-sync.target systemd-time-wait-sync.service rclone-onedrive@SERVER-BACKUP.service
+Wants=network-online.target time-sync.target systemd-time-wait-sync.service
 Requires=rclone-onedrive@SERVER-BACKUP.service
 
 [Service]
